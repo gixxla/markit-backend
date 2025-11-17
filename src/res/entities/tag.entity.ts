@@ -1,7 +1,7 @@
 import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from "typeorm";
 import { CommonEntity } from "./common.entity";
 import { User } from "./user.entity";
-import { BookmarkTag } from "./bookmarktag.entity";
+import { BookmarkTag } from "./bookmark-tag.entity";
 
 @Entity("tag")
 export class Tag extends CommonEntity {

@@ -2,7 +2,7 @@ import { Entity, Column, OneToMany, ManyToOne, OneToOne, JoinColumn } from "type
 import { CommonEntity } from "./common.entity";
 import { User } from "./user.entity";
 import { Category } from "./category.entity";
-import { BookmarkTag } from "./bookmarktag.entity";
+import { BookmarkTag } from "./bookmark-tag.entity";
 import { OfflineBookmark } from "./offline-bookmark.entity";
 
 @Entity("bookmark")
