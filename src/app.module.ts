@@ -3,7 +3,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import * as path from "path";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { UserModule } from "./res/user/user.module";
+import { AuthModule } from "./res/auth/auth.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 
 console.log(`.env.${process.env.NODE_ENV}`);
@@ -30,7 +30,7 @@ console.log(`.env.${process.env.NODE_ENV}`);
         timezone: "local",
       }),
     }),
-    UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
