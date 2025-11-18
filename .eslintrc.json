@@ -26,6 +26,7 @@
         "tsx": "never"
       }
     ],
+    "import/no-cycle": ["error", { "ignoreExternal": true }],
     "no-console": "error"
   },
   "parser": "@typescript-eslint/parser",

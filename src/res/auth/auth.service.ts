@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
-import { User } from "../entities/user.entity";
+import User from "../entities/user.entity";
 import RegisterDto from "./register.dto";
 
 @Injectable()
@@ -40,12 +40,12 @@ class AuthService {
     }
 
     const salt = await bcrypt.genSalt();
-    const passwordHash = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = this.userRepository.create({
       anonymousId,
       email,
-      passwordHash,
+      hashedPassword,
       isRegistered: true,
       lastActiveAt: new Date(),
     });

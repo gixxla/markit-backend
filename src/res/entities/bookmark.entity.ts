@@ -1,12 +1,13 @@
+/* eslint-disable import/no-cycle */
 import { Entity, Column, OneToMany, ManyToOne, OneToOne, JoinColumn } from "typeorm";
-import { CommonEntity } from "./common.entity";
-import { User } from "./user.entity";
-import { Category } from "./category.entity";
-import { BookmarkTag } from "./bookmark-tag.entity";
-import { OfflineBookmark } from "./offline-bookmark.entity";
+import CommonEntity from "./common.entity";
+import User from "./user.entity";
+import Category from "./category.entity";
+import BookmarkTag from "./bookmark-tag.entity";
+import OfflineBookmark from "./offline-bookmark.entity";
 
 @Entity("bookmark")
-export class Bookmark extends CommonEntity {
+export default class Bookmark extends CommonEntity {
   @ManyToOne(() => User, (user) => user.tags)
   @JoinColumn({ name: "user_id" })
   user: User;

@@ -1,9 +1,10 @@
+/* eslint-disable import/no-cycle */
 import { Entity, PrimaryColumn, ManyToOne } from "typeorm";
-import { Bookmark } from "./bookmark.entity";
-import { Tag } from "./tag.entity";
+import Bookmark from "./bookmark.entity";
+import Tag from "./tag.entity";
 
 @Entity("bookmark_tag")
-export class BookmarkTag {
+export default class BookmarkTag {
   @PrimaryColumn()
   bookmarkId: number;
 

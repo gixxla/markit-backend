@@ -1,6 +1,6 @@
 import { CreateDateColumn, PrimaryGeneratedColumn } from "typeorm";
 
-export class CommonEntity {
+export default class CommonEntity {
   @PrimaryGeneratedColumn({ type: "bigint" })
   id: string;
 

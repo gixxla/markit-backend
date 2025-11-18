@@ -1,11 +1,12 @@
+/* eslint-disable import/no-cycle */
 import { Entity, Column, OneToMany } from "typeorm";
-import { CommonEntity } from "./common.entity";
-import { Bookmark } from "./bookmark.entity";
-import { Category } from "./category.entity";
-import { Tag } from "./tag.entity";
+import CommonEntity from "./common.entity";
+import Bookmark from "./bookmark.entity";
+import Category from "./category.entity";
+import Tag from "./tag.entity";
 
 @Entity("user")
-export class User extends CommonEntity {
+export default class User extends CommonEntity {
   @Column({ type: "uuid", unique: true })
   anonymousId: string;
 
@@ -13,7 +14,7 @@ export class User extends CommonEntity {
   email: string | null;
 
   @Column({ type: "varchar", nullable: true })
-  passwordHash: string | null;
+  hashedPassword: string | null;
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   lastActiveAt: Date;
