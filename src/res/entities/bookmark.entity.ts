@@ -28,18 +28,18 @@ export default class Bookmark extends CommonEntity {
   @Column({ name: "category_id", nullable: true })
   categoryId: number;
 
-  @Column({ type: "boolean", default: true })
+  @Column({ name: "is_read_later", type: "boolean", default: true })
   isReadLater: boolean;
 
-  @Column({ type: "boolean", default: false })
+  @Column({ name: "is_offline_available", type: "boolean", default: false })
   isOfflineAvailable: boolean;
+
+  @Column({ name: "last_accessed_at", type: "timestamp", nullable: true })
+  lastAccessedAt: Date;
 
   @OneToMany(() => BookmarkTag, (bookmarkTag) => bookmarkTag.bookmark)
   bookmarkTags: BookmarkTag[];
 
   @OneToOne(() => OfflineBookmark, (offline) => offline.bookmark)
   offlineBookmark: OfflineBookmark;
-
-  @Column({ type: "timestamp", nullable: true })
-  lastAccessedAt: Date;
 }

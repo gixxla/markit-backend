@@ -7,19 +7,19 @@ import Tag from "./tag.entity";
 
 @Entity("user")
 export default class User extends CommonEntity {
-  @Column({ type: "uuid", unique: true })
+  @Column({ name: "anonymous_id", type: "uuid", unique: true })
   anonymousId: string;
 
   @Column({ type: "varchar", nullable: true, unique: true })
   email: string | null;
 
-  @Column({ type: "varchar", nullable: true })
+  @Column({ name: "hashed_password", type: "varchar", nullable: true })
   hashedPassword: string | null;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  @Column({ name: "last_active_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   lastActiveAt: Date;
 
-  @Column({ type: "boolean", default: false })
+  @Column({ name: "is_registered", type: "boolean", default: false })
   isRegistered: boolean;
 
   @OneToMany(() => Bookmark, (bookmark) => bookmark.user)

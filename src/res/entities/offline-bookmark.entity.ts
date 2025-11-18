@@ -15,6 +15,6 @@ export default class OfflineBookmark extends CommonEntity {
   @Column({ type: "text" })
   data: string;
 
-  @Column({ type: "varchar", length: 20 })
+  @Column({ name: "data_type", type: "varchar", length: 20 })
   dataType: string;
 }

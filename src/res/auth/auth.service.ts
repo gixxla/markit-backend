@@ -27,8 +27,12 @@ class AuthService {
       lastActiveAt: new Date(),
     });
 
-    await this.userRepository.save(newUser);
-    return newUser;
+    try {
+      await this.userRepository.save(newUser);
+      return newUser;
+    } catch (error) {
+      throw new ConflictException("통신 중 오류가 발생했습니다.");
+    }
   }
 
   async register(registerDto: RegisterDto): Promise<User> {
