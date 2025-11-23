@@ -9,5 +9,6 @@ import BookmarkTag from "../entities/bookmark-tag.entity";
   imports: [TypeOrmModule.forFeature([Tag, BookmarkTag])],
   controllers: [TagController],
   providers: [TagService],
+  exports: [TagService],
 })
 export default class TagModule {}

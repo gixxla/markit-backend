@@ -5,22 +5,21 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 
 import Bookmark from "../entities/bookmark.entity";
-import Tag from "../entities/tag.entity";
 import BookmarkTag from "../entities/bookmark-tag.entity";
 import User from "../entities/user.entity";
 import CreateBookmarkDto from "./dto/create-bookmark.dto";
 import GetBookmarksDto from "./dto/get-bookmarks.dto";
 import UpdateBookmarkDto from "./dto/update-bookmark.dto";
+import TagService from "../tag/tag.service";
 
 @Injectable()
 export default class BookmarkService {
   constructor(
     @InjectRepository(Bookmark)
     private readonly bookmarkRepository: Repository<Bookmark>,
-    @InjectRepository(Tag)
-    private readonly tagRepository: Repository<Tag>,
     @InjectRepository(BookmarkTag)
     private readonly bookmarkTagRepository: Repository<BookmarkTag>,
+    private readonly tagService: TagService,
   ) {}
 
   async fetchTitleFromUrl(url: string): Promise<string> {
@@ -55,17 +54,7 @@ export default class BookmarkService {
 
     if (tags && tags.length > 0) {
       const tagPromises = tags.map(async (tagName) => {
-        let tag = await this.tagRepository.findOne({
-          where: { name: tagName, userId: Number(user.id) },
-        });
-
-        if (!tag) {
-          tag = this.tagRepository.create({
-            name: tagName,
-            userId: Number(user.id),
-          });
-          tag = await this.tagRepository.save(tag);
-        }
+        const tag = await this.tagService.findOrCreateByName(user.id, tagName);
 
         return this.bookmarkTagRepository.create({
           bookmarkId: Number(savedBookmark.id),
@@ -76,6 +65,7 @@ export default class BookmarkService {
       const newBookmarkTags = await Promise.all(tagPromises);
       await this.bookmarkTagRepository.save(newBookmarkTags);
     }
+
     return savedBookmark;
   }
 
@@ -145,36 +135,22 @@ export default class BookmarkService {
       throw new ForbiddenException("이 북마크를 수정할 권한이 없습니다.");
     }
 
-    if (Object.keys(fieldsToUpdate).length > 0) {
-      await this.bookmarkRepository.update(bookmarkId, fieldsToUpdate);
-    }
+    await this.bookmarkRepository.update(bookmarkId, fieldsToUpdate);
 
-    if (tags) {
+    if (tags && tags.length > 0) {
       await this.bookmarkTagRepository.delete({ bookmarkId });
 
-      if (tags.length > 0) {
-        const tagPromises = tags.map(async (tagName) => {
-          let tag = await this.tagRepository.findOne({
-            where: { name: tagName, userId: Number(userId) },
-          });
+      const tagPromises = tags.map(async (tagName) => {
+        const tag = await this.tagService.findOrCreateByName(userId, tagName);
 
-          if (!tag) {
-            tag = this.tagRepository.create({
-              name: tagName,
-              userId: Number(userId),
-            });
-            tag = await this.tagRepository.save(tag);
-          }
-
-          return this.bookmarkTagRepository.create({
-            bookmarkId,
-            tagId: Number(tag.id),
-          });
+        return this.bookmarkTagRepository.create({
+          bookmarkId: Number(bookmarkId),
+          tagId: Number(tag.id),
         });
+      });
 
-        const newBookmarkTags = await Promise.all(tagPromises);
-        await this.bookmarkTagRepository.save(newBookmarkTags);
-      }
+      const newBookmarkTags = await Promise.all(tagPromises);
+      await this.bookmarkTagRepository.save(newBookmarkTags);
     }
 
     return this.bookmarkRepository.findOne({

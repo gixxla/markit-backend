@@ -87,4 +87,20 @@ export default class TagService {
 
     await this.tagRepository.delete(tagId);
   }
+
+  async findOrCreateByName(userId: string, tagName: string): Promise<Tag> {
+    let tag = await this.tagRepository.findOne({
+      where: { name: tagName, userId: Number(userId) },
+    });
+
+    if (!tag) {
+      tag = this.tagRepository.create({
+        name: tagName,
+        userId: Number(userId),
+      });
+      tag = await this.tagRepository.save(tag);
+    }
+
+    return tag;
+  }
 }

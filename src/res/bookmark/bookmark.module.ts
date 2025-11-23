@@ -6,9 +6,10 @@ import Bookmark from "../entities/bookmark.entity";
 import Tag from "../entities/tag.entity";
 import BookmarkTag from "../entities/bookmark-tag.entity";
 import User from "../entities/user.entity";
+import TagModule from "../tag/tag.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Bookmark, Tag, BookmarkTag, User])],
+  imports: [TypeOrmModule.forFeature([Bookmark, Tag, BookmarkTag, User]), TagModule],
   controllers: [BookmarkController],
   providers: [BookmarkService],
 })
