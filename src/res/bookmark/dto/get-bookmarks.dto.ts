@@ -13,6 +13,11 @@ export default class GetBookmarksDto {
   cursor?: string;
 
   @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  categoryId?: number;
+
+  @IsOptional()
   @IsString()
   tag?: string;
 }

@@ -10,7 +10,7 @@ import BookmarkTag from "../entities/bookmark-tag.entity";
 import User from "../entities/user.entity";
 import CreateBookmarkDto from "./dto/create-bookmark.dto";
 import GetBookmarksDto from "./dto/get-bookmarks.dto";
-import UpdateBookmarkDto from "./update-bookmark.dto";
+import UpdateBookmarkDto from "./dto/update-bookmark.dto";
 
 @Injectable()
 export default class BookmarkService {
@@ -80,7 +80,7 @@ export default class BookmarkService {
   }
 
   async GetBookmarks(user: User, dto: GetBookmarksDto) {
-    const { limit = 20, cursor, tag } = dto;
+    const { limit = 20, cursor, tag, categoryId } = dto;
 
     const query = this.bookmarkRepository
       .createQueryBuilder("bookmark")
@@ -96,6 +96,10 @@ export default class BookmarkService {
 
     if (tag) {
       query.andWhere("tag.name = :tagName", { tagName: tag });
+    }
+
+    if (categoryId) {
+      query.andWhere("bookmark.categoryId = :categoryId", { categoryId });
     }
 
     const bookmarks = await query.getMany();

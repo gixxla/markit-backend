@@ -18,7 +18,7 @@ import CreateBookmarkDto from "./dto/create-bookmark.dto";
 import UserDeco from "../../decorators/user.decorator";
 import User from "../entities/user.entity";
 import GetBookmarksDto from "./dto/get-bookmarks.dto";
-import UpdateBookmarkDto from "./update-bookmark.dto";
+import UpdateBookmarkDto from "./dto/update-bookmark.dto";
 
 @Controller("bookmark")
 export default class BookmarkController {
