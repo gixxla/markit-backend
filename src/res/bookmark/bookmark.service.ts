@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import axios from "axios";
@@ -10,6 +10,7 @@ import BookmarkTag from "../entities/bookmark-tag.entity";
 import User from "../entities/user.entity";
 import CreateBookmarkDto from "./create-bookmark.dto";
 import GetBookmarksDto from "./get-bookmarks.dto";
+import UpdateBookmarkDto from "./update-bookmark.dto";
 
 @Injectable()
 export default class BookmarkService {
@@ -122,5 +123,77 @@ export default class BookmarkService {
         limit,
       },
     };
+  }
+
+  async updateBookmark(userId: string, bookmarkId: number, updateDto: UpdateBookmarkDto): Promise<Bookmark> {
+    const { tags, ...fieldsToUpdate } = updateDto;
+
+    const bookmark = await this.bookmarkRepository.findOne({
+      where: { id: String(bookmarkId) },
+      relations: ["user"],
+    });
+
+    if (!bookmark) {
+      throw new NotFoundException("북마크를 찾을 수 없습니다.");
+    }
+
+    if (bookmark.user.id !== userId) {
+      throw new ForbiddenException("이 북마크를 수정할 권한이 없습니다.");
+    }
+
+    if (Object.keys(fieldsToUpdate).length > 0) {
+      await this.bookmarkRepository.update(bookmarkId, fieldsToUpdate);
+    }
+
+    if (tags) {
+      await this.bookmarkTagRepository.delete({ bookmarkId });
+
+      if (tags.length > 0) {
+        const tagPromises = tags.map(async (tagName) => {
+          let tag = await this.tagRepository.findOne({
+            where: { name: tagName, userId: Number(userId) },
+          });
+
+          if (!tag) {
+            tag = this.tagRepository.create({
+              name: tagName,
+              userId: Number(userId),
+            });
+            tag = await this.tagRepository.save(tag);
+          }
+
+          return this.bookmarkTagRepository.create({
+            bookmarkId,
+            tagId: Number(tag.id),
+          });
+        });
+
+        const newBookmarkTags = await Promise.all(tagPromises);
+        await this.bookmarkTagRepository.save(newBookmarkTags);
+      }
+    }
+
+    return this.bookmarkRepository.findOne({
+      where: { id: String(bookmarkId) },
+      relations: ["bookmarkTags", "bookmarkTags.tag"],
+    }) as Promise<Bookmark>;
+  }
+
+  async deleteBookmark(userId: string, bookmarkId: number): Promise<void> {
+    const bookmark = await this.bookmarkRepository.findOne({
+      where: { id: String(bookmarkId) },
+      relations: ["user"],
+    });
+
+    if (!bookmark) {
+      throw new NotFoundException("북마크를 찾을 수 없습니다.");
+    }
+
+    if (bookmark.user.id !== userId) {
+      throw new ForbiddenException("이 북마크를 삭제할 권한이 없습니다.");
+    }
+
+    await this.bookmarkTagRepository.delete({ bookmarkId });
+    await this.bookmarkRepository.delete(bookmarkId);
   }
 }
