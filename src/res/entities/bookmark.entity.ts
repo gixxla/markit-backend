@@ -28,7 +28,7 @@ export class Bookmark extends CommonEntity {
   @Column({ name: "category_id", nullable: true })
   categoryId: string;
 
-  @Column({ name: "is_read_later", type: "boolean", default: true })
+  @Column({ name: "is_read_later", type: "boolean", default: false })
   isReadLater: boolean;
 
   @Column({ name: "is_offline_available", type: "boolean", default: false })

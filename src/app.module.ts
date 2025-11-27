@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import * as path from "path";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { APP_INTERCEPTOR } from "@nestjs/core";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UserModule } from "./res/user/user.module";
@@ -9,6 +10,7 @@ import { AuthModule } from "./res/auth/auth.module";
 import { BookmarkModule } from "./res/bookmark/bookmark.module";
 import { CategoryModule } from "./res/category/category.module";
 import { TagModule } from "./res/tag/tag.module";
+import { UserActivityInterceptor } from "./res/common/interceptors/user-activity.interceptor";
 
 @Module({
   imports: [
@@ -39,6 +41,12 @@ import { TagModule } from "./res/tag/tag.module";
     TagModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: UserActivityInterceptor,
+    },
+  ],
 })
 export class AppModule {}

@@ -54,7 +54,7 @@ export class BookmarkService {
       userId: user.id,
       url,
       title,
-      isReadLater: true,
+      isReadLater: false,
       categoryId,
     });
 
@@ -226,7 +226,7 @@ export class BookmarkService {
       userId: user.id,
       url,
       title,
-      isReadLater: true,
+      isReadLater: false,
       categoryId,
     });
 
